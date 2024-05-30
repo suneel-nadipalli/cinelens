@@ -6,3 +6,8 @@
 .env.production.local
 .venv
 __pycache__
+*.llamafile.exe
+*.log
+*.jpg
+*jpeg
+*.png
