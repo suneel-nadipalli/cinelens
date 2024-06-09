@@ -10,6 +10,10 @@ from flask_cors import CORS
 
 from utils import send_image_get_stream
 
+from mongo import *
+
+import base64
+
 load_dotenv(dotenv_path="./.env.local")
 
 DEBUG = bool(os.environ.get("DEBUG", False))
@@ -23,6 +27,41 @@ app.config["DEBUG"] = DEBUG
 @app.route("/")
 def hello_world():
     return 'Hello, World!'
+
+@app.route("/sim_img", methods=["POST"])
+def sim_img():
+
+    client = connect_to_mongo()
+
+    # insert_imaegs(client, "../misc/images")
+    
+    image = request.files["image"]
+
+    image_name = image.filename
+
+    image_path = f"../misc/temp/{image_name}"
+
+    image.save(image_path)
+
+    results = get_sim_imgs(image_path, client)
+
+    sim_imgs = []
+
+    for document in results:
+        
+        image = base64.b64encode(document['image']).decode('utf-8')
+
+        sim_imgs.append(
+            {
+                "image": image,
+                "score": document['score'],
+                "name": document['image_path'].split("/")[-1].split(".")[0]
+            }
+        )
+
+    client.close()
+
+    return sim_imgs
 
 @app.route("/describe_img", methods=["POST"])
 def describe_img():

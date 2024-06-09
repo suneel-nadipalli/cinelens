@@ -50,6 +50,6 @@ def send_image_get_stream(image_path, input):
     }
 
     # Send request with stream=True to keep the connection open for streaming
-    response = requests.post("http://127.0.0.1:8080/completion", json=json_body,    headers=headers, stream=False)
+    response = requests.post("http://127.0.0.1:8532/completion", json=json_body,    headers=headers, stream=False)
 
     return response
