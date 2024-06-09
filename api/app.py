@@ -30,12 +30,12 @@ def hello_world():
 
 @app.route("/sim_img", methods=["POST"])
 def sim_img():
-
-    client = connect_to_mongo()
-
-    # insert_imaegs(client, "../misc/images")
     
+    print("\nRequest received")
+
     image = request.files["image"]
+
+    print("\nImage received")
 
     image_name = image.filename
 
@@ -43,7 +43,13 @@ def sim_img():
 
     image.save(image_path)
 
+    print("\nImage saved")
+
+    client = connect_to_mongo()
+
     results = get_sim_imgs(image_path, client)
+
+    print("\nResults fetched")
 
     sim_imgs = []
 
@@ -55,11 +61,15 @@ def sim_img():
             {
                 "image": image,
                 "score": document['score'],
-                "name": document['image_path'].split("/")[-1].split(".")[0]
+                "name": document['image_path'].split("/")[-1].split(".")[0].split("\\")[-1]
             }
         )
 
+    print("\nResults processed")
+
     client.close()
+
+    print("\nConnection closed")
 
     return sim_imgs
 

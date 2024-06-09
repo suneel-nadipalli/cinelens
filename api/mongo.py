@@ -46,7 +46,7 @@ def connect_to_mongo():
     # Send a ping to confirm a successful connection
     try:
         client.admin.command('ping')
-        print("Pinged your deployment. You successfully connected to MongoDB!")
+        print("\nPinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print(e)
     return client
@@ -82,7 +82,7 @@ def insert_imaegs(client, path):
     try:
         db.create_collection(COLLECTION_NAME)
     except CollectionInvalid:
-        print("Images collection already exists")
+        print("\nImages collection already exists")
     
     collection = db[COLLECTION_NAME]
 
@@ -95,18 +95,20 @@ def insert_imaegs(client, path):
     # result = collection.update_many(filter={}, update=alldata, upsert=True)
 
     document_ids = result.inserted_ids
-    print("# of documents inserted: "+str(len(document_ids)))
+    print(f"\n# of documents inserted: {len(document_ids)}")
     #print(f"_id of inserted document: {document_ids}")
-    print("Process Completed!")
+    print("\nProcess Completed!")
 
 
 def get_sim_imgs(query_img, client):
+
     query_img_embedding = generate_image_embeddings(query_img)
+
+    print("\nQuery image embedding generated")
 
     db = client[DB_NAME]
 
     collection = db[COLLECTION_NAME]
-
 
     pipeline = [
     {
@@ -131,6 +133,8 @@ def get_sim_imgs(query_img, client):
 ]
 
     results = collection.aggregate(pipeline)
+
+    print("\nAggregation pipeline executed")
 
     results = [document for document in results]
 
