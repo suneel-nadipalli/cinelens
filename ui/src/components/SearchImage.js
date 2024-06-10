@@ -3,16 +3,13 @@ import "../css/SearchImage.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5050";
 
-const SearchImage = () => {
+const SearchImage = ({ onSimilarImages }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imageName, setImageName] = useState("");
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
-
-      setImageName(file.name);
 
       const img_data = new FormData();
 
@@ -24,7 +21,8 @@ const SearchImage = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
+          onSimilarImages(data);
+          // console.log(data);
         })
         .catch((error) => {
           console.error("Error:", error);
