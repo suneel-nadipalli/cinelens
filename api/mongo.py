@@ -28,7 +28,7 @@ MONGO_URI = os.getenv("MONGO_URI")
 
 DB_NAME = os.getenv("DB_NAME")
 
-COLLECTION_NAME = os.getenv("COLLECTION_NAME")\
+COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 
 ATLAS_INDEX = os.getenv("ATLAS_INDEX")
 
