@@ -15,7 +15,7 @@ const SearchImage = ({ onSimilarImages }) => {
 
       img_data.append("image", file);
 
-      fetch(`${API_URL}/sim_img`, {
+      fetch(`${API_URL}/img_rag`, {
         method: "POST",
         body: img_data,
       })

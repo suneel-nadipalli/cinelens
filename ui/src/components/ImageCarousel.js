@@ -24,7 +24,7 @@ const ImageCarousel = ({ data }) => {
           <div className="carousel-preview">
             <img
               src={`data:image/jpeg;base64,${item.image}`}
-              alt={item.name}
+              alt={item.source}
               key={idx}
               className={slide === idx ? "slide" : "slide slide-hidden"}
             />

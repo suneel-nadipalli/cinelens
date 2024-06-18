@@ -1,55 +1,133 @@
-import base64
+from langchain_openai.chat_models import ChatOpenAI
 
-import requests
+from langchain_core.prompts import PromptTemplate
 
-def send_image_get_stream(image_path, input):
-    # Encode the image to base64
-    with open(image_path, 'rb') as image_file:
-        base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+from langchain_core.runnables import RunnablePassthrough
 
-    _prompt = """A chat between a curious human and an artificial intelligence assistant.
-    The assistant gives helpful, detailed, and polite answers to the human's questions
-    USER:[img-10]{prompt}
-    ASSISTANT:""".format(prompt=input)
+from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 
-    # Prepare the JSON body for the request
-    json_body = {
-        # "stream": True,
-        "stream" : False,
-        "n_predict": 350,
-        "temperature": 0.16,
-        "stop": ["</s>", "Llama:", "User:"],
-        "repeat_last_n": 78,
-        "repeat_penalty": 1.18,
-        "top_k": 40,
-        "top_p": 1,
-        "min_p": 0.05,
-        "tfs_z": 1,
-        "typical_p": 1,
-        "presence_penalty": 0,
-        "frequency_penalty": 0,
-        "mirostat": 0,
-        "mirostat_tau": 5,
-        "mirostat_eta": 0.1,
-        "grammar": "",
-        "n_probs": 0,
-        "min_keep": 0,
-        "image_data": [{"data": base64_image, "id": 10}],
-        "cache_prompt": True,
-        "api_key": "",
-        "slot_id": 0,
-        "prompt": _prompt
-    }
+from mongo_utils import *
 
-    # Headers as before...
-    headers = {
-        # "accept": "text/event-stream",
-        "accept-language": "en-US,en",
-        "cache-control": "no-cache",
-        "content-type": "application/json"
-    }
+from dotenv import load_dotenv
 
-    # Send request with stream=True to keep the connection open for streaming
-    response = requests.post("http://127.0.0.1:8532/completion", json=json_body,    headers=headers, stream=False)
+from tqdm import tqdm
+
+import os, requests
+
+from pathlib import Path
+
+load_dotenv(dotenv_path=".env.local")
+
+headers = {
+    "accept": "application/json",
+    "Authorization": f"Bearer {os.getenv('TMDB_API_KEY')}",
+}
+
+model = ChatOpenAI(api_key="sk-no-key-required", 
+        model_name = 'LLaMA_CPP',
+        base_url="http://127.0.0.1:8080/v1",
+        temperature=0.3)
+
+def get_titles(n=500):
+
+    titles_path = Path('movies.txt')
+
+    if titles_path.is_file():
+        with open('movies.txt', 'r', encoding="utf-8") as f:
+            titles = [x.strip() for x in f.readlines()]
+    else:
+        cnt = 500
+
+        titles = []
+
+        for idx in tqdm(range(1, cnt+1)):
+            url = f"https://api.themoviedb.org/3/movie/top_rated?language=en-US&page={idx}"
+
+            response = requests.get(url, headers=headers)
+
+            data = response.json()
+
+            titles.extend(
+            [movie['title'] for movie in data['results'] if movie['original_language'] == 'en']
+            )
+        
+        with open('movies.txt', 'w', encoding="utf-8") as f:
+            for title in titles:
+                f.write(f"{title}\n")
+    
+    return titles[:n]
+
+def insert_all_movies(titles=None, n=500, client=None):
+    
+    if not titles:
+        titles = get_titles(n)
+
+    for title in tqdm(titles):
+        title = title.strip()
+        insert_movie(title, client=client)
+
+def insert_all_vs(titles=None, n=500, client=None):
+    
+    if not titles:
+        titles = get_titles(n)
+
+    titles = titles[:n]
+
+    for title in tqdm(titles):
+        movie = get_movie(title)
+        if movie:
+            insert_vs(movie, client=client)
+
+def insert_all_imgs(titles=None, n=500, client=None):
+    
+    if not titles:
+        titles = get_titles(n)
+
+    titles = titles[:n]
+
+    for title in tqdm(titles):
+        insert_imgs(title, client=client)
+
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+def query_rag_movie(query):
+    vs = get_vs()
+
+    retriever = vs.as_retriever(
+                search_type = "similarity",
+                search_kwargs = {"k": 3}
+                )
+    
+    template = """Answer the question: {question} based only on the following context:
+    context: {context}
+    """
+
+    output_parser = JsonOutputParser()
+
+    prompt = PromptTemplate.from_template(template = template,
+                        input_varaibles = ["context", "question"],
+                        output_variables = ["answer"],)
+
+    output_parser = StrOutputParser()
+
+    retrieval_chain = (
+    {"context": retriever | format_docs,  "question": RunnablePassthrough()}
+    | prompt 
+    | model 
+    | output_parser
+    )
+
+
+    query = f"""
+    Which movie is being described with the following details: 
+
+    {query}
+
+    """
+
+    response = retrieval_chain.invoke(query)
 
     return response
+

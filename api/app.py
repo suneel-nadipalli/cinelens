@@ -1,6 +1,4 @@
-from flask import Flask, request, jsonify
-
-import requests
+from flask import Flask, request
 
 from dotenv import load_dotenv
 
@@ -8,11 +6,13 @@ import os
 
 from flask_cors import CORS
 
-from utils import send_image_get_stream
+from PIL import Image
 
-from mongo import *
+from mongo_utils import *
 
-import base64
+from io import BytesIO
+
+from base64 import b64encode
 
 load_dotenv(dotenv_path="./.env.local")
 
@@ -24,86 +24,45 @@ CORS(app)
 
 app.config["DEBUG"] = DEBUG
 
+headers = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
+        (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+}
+
 @app.route("/")
 def hello_world():
     return 'Hello, World!'
 
-@app.route("/sim_img", methods=["POST"])
-def sim_img():
-    
-    print("\nRequest received")
-
-    image = request.files["image"]
-
-    print("\nImage received")
-
-    image_name = image.filename
-
-    image_path = f"../misc/temp/{image_name}"
-
-    image.save(image_path)
-
-    print("\nImage saved")
+@app.route("/img_rag", methods=["POST"])
+def img_rag():
 
     client = connect_to_mongo()
 
-    results = get_sim_imgs(image_path, client)
+    print("\nRequest received\n")
 
-    print("\nResults fetched")
+    image = request.files['image']
 
-    sim_imgs = []
+    results = get_img(image, client=client, type="file")
 
-    for document in results:
-        
-        image = base64.b64encode(document['image']).decode('utf-8')
+    img_results = []
 
-        sim_imgs.append(
+    for doc in results:
+
+        image = b64encode(requests.get(doc['url'], headers=headers).content).decode('utf-8')
+            
+        img_results.append(
             {
-                "image": image,
-                "score": document['score'],
-                "name": document['image_path'].split("/")[-1].split(".")[0].split("\\")[-1]
+                "url": doc["url"],
+                "score": doc["score"],
+                "source": doc["source"],
+                "image": image
             }
         )
 
-    print("\nResults processed")
-
     client.close()
 
-    print("\nConnection closed")
-
-    return sim_imgs
-
-@app.route("/describe_img", methods=["POST"])
-def describe_img():
-
-    image = request.files["image"]
-
-    print(type(image))
-
-    image_name = image.filename
-
-    image_path = f"../misc/images/{image_name}"
-
-    image.save(image_path)
-
-    # return {"resp": f"Image {image_name} saved successfully"}
-
-    _input = "Describe this image in detail"
-    
-    response = send_image_get_stream(image_path, input=_input)
-
-    if response.status_code == 200:
-        data = response.json()['content']
-
-        status = response.status_code
-    
-    else:
-        data = "Error"
-
-        status = response.status_code
-
-    return jsonify({"desc": data, "status": status})    
-
+    return img_results
 
 
 if __name__ == "__main__":
