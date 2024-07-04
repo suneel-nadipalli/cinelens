@@ -11,7 +11,7 @@ from sentence_transformers import SentenceTransformer
 import os, certifi
 
 from PIL import Image
-import requests
+import requests, random
 from io import BytesIO
 
 from dotenv import load_dotenv
@@ -167,12 +167,24 @@ def get_vs(client=None):
 
     vector_search = MongoDBAtlasVectorSearch.from_connection_string(
     os.getenv("MONGO_URI"),
-    cl_db + "." + f"{vs_col}",
+    os.getenv("CINELENS_DB") + "." + os.getenv("VS_COL"),
     OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"), 
                             disallowed_special=()),
     )
 
     return vector_search
+
+def get_url(title, client=None):
+
+    cl_db = client[os.getenv("CINELENS_DB")]
+
+    movie_col = cl_db[os.getenv("MOVIES_COL")]
+
+    movie = movie_col.find_one({"name": title})
+
+    urls = movie['images']
+
+    return random.choice(urls)
 
 def get_img(query, client=None, type="file"):
 
@@ -188,8 +200,8 @@ def get_img(query, client=None, type="file"):
             "index": "cl_index",
             "path": "embeddings",
             "queryVector": query_emb.tolist(),
-            "numCandidates": 5,
-            "limit": 5,
+            "numCandidates": 250,
+            "limit": 250,
         }
     },
     {
@@ -201,6 +213,17 @@ def get_img(query, client=None, type="file"):
                 "$meta": "vectorSearchScore"
             }
         }
+    },
+    {
+        "$group": {
+            "_id": "$source",
+            "score": {"$avg": "$score"}
+        }
+    },
+    {
+        "$sort": {
+            "score": -1
+    }
     }
     ]
 

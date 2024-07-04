@@ -146,7 +146,7 @@ def get_details(title, headers):
 
                 data = resp.json()
 
-                keys = ['backdrops', 'logos', 'posters']
+                keys = ['posters', 'backdrops']
 
                 details['images'] = []
 
@@ -157,4 +157,66 @@ def get_details(title, headers):
                         urls = [ f"{base_image_url}{image['file_path']}" for image in data[key]]
 
                         details['images'].extend(urls)
-    return details    
+                
+                details['images'] = details['images'][:50]
+
+                details['poster'] = f"{base_image_url}{data['posters'][0]['file_path']}"
+
+                details['backdrop'] = f"{base_image_url}{data['backdrops'][0]['file_path']}"
+
+    return details
+
+def get_poster(title, headers):
+    base_url = "https://api.themoviedb.org/3/movie/"
+
+    details = {}
+
+    title_url = f"https://api.themoviedb.org/3/search/movie?query={title}&include_adult=true&language=en-US&page=1"
+
+    resp = requests.get(title_url, headers=headers)
+
+    if resp.status_code == 200:
+
+        data = resp.json()
+
+        if data['results']:
+            movie_id = data['results'][0]['id']
+
+            images_url = f"{base_url}{movie_id}/images"
+
+            base_image_url = "https://image.tmdb.org/t/p/w500"
+
+            resp = requests.get(images_url, headers=headers)
+
+            if resp.status_code == 200:
+
+                data = resp.json()
+
+                details['poster'] = f"{base_image_url}{data['posters'][0]['file_path']}"
+
+    return details['poster']
+
+
+def get_new_providers(providers):
+
+    providers = [provider.lower() for provider in providers]
+
+    providers_new = []
+
+    for provider in providers:
+        if 'prime' in provider:
+            providers_new.append('prime')
+        
+        if 'disney' in provider:
+            providers_new.append('disney')
+
+        if 'netflix' in provider:
+            providers_new.append('netflix')
+        
+        if 'max' in provider:
+            providers_new.append('max')
+        
+        if 'youtube' in provider:
+            providers_new.append('youtube')
+    
+    return list(set(providers_new))

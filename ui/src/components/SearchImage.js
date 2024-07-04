@@ -33,7 +33,6 @@ const SearchImage = ({ onSimilarImages }) => {
   return (
     <div className="image-upload">
       <input type="file" accept="image/*" onChange={handleImageUpload} />
-      {/* {imageName && <p className="image-name">{imageName}</p>} */}
       {selectedImage && (
         <div className="image-preview">
           <img src={selectedImage} alt="Uploaded preview" />

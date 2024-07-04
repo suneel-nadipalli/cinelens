@@ -10,9 +10,9 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f0f0f0;
-  /* background: url('../images/bkg.jpg') no-repeat center center fixed; */
+  background: url('../images/bkg.jpg') no-repeat center center fixed;
   background-size: cover;
   position: relative;
 }
@@ -29,13 +29,16 @@ body, html {
 
 .container {
   background-color: rgba(255, 255, 255, 0.85);
-  padding: 20px;
+  /* margin-top: -250px; */
+  padding: 5px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 800px;
-  max-height: fit-content;
+  width: 700px;
+  min-height: 400px;
+  max-height: max-content;
   z-index: 2;
   position: relative;
+  transition: height 0.3s ease;
 }
 
 h1 {
@@ -85,4 +88,5 @@ p {
 
 .search-content {
   margin-top: 20px;
+  
 }

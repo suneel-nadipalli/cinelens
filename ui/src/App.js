@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/App.css";
 import SearchImage from "./components/SearchImage";
-import ImageCarousel from "./components/ImageCarousel";
+import ResultsCarousel from "./components/ResultsCarousel";
+import SearchDetails from "./components/SearchDetails";
+import { Row, Col } from "react-bootstrap";
 
 const App = () => {
   const [searchType, setSearchType] = useState("title");
+
   const [similarImages, setSimilarImages] = useState([]);
 
   const handleSimilarImages = (data) => {
@@ -20,44 +23,52 @@ const App = () => {
   return (
     <div className="App">
       <div className="overlay"></div>
-      <div className="container">
-        <p className="mb-0">Movies at your fingertips</p>
-        <h1>CineLens</h1>
-        <p>
-          Search for your favorite movies with the bare minimum! Upload a still
-          from the movie, describe a scene or just vague details you remember
-          and find out that one movie that's been bugging you at the back of
-          your head!
-        </p>
-        <nav className="nav">
-          <div
-            className={`nav-item ${searchType === "title" ? "active" : ""}`}
-            onClick={() => setSearchType("title")}
-          >
-            Search by Image
-            {searchType === "title" && <div className="underline"></div>}
-          </div>
-          <div
-            className={`nav-item ${searchType === "genre" ? "active" : ""}`}
-            onClick={() => setSearchType("genre")}
-          >
-            Search by Plot/Details
-            {searchType === "genre" && <div className="underline"></div>}
-          </div>
-        </nav>
-        <div className="search-content">
-          {searchType === "title" ? (
-            <>
-              <SearchImage onSimilarImages={handleSimilarImages} />
-              {similarImages.length > 0 && (
-                <ImageCarousel data={similarImages}></ImageCarousel>
+      <Row>
+        <Col>
+          <div className="container">
+            <p className="mb-0">Movies at your fingertips</p>
+            <h1>CineLens</h1>
+            <p style={{ margin: "20px" }}>
+              Search for your favorite movies with the bare minimum! Upload a
+              still from the movie, describe a scene or just vague details you
+              remember and find out that one movie that's been bugging you at
+              the back of your head!
+            </p>
+            <nav className="nav">
+              <div
+                className={`nav-item ${searchType === "title" ? "active" : ""}`}
+                onClick={() => setSearchType("title")}
+              >
+                Search by Image
+                {searchType === "title" && <div className="underline"></div>}
+              </div>
+              <div
+                className={`nav-item ${searchType === "genre" ? "active" : ""}`}
+                onClick={() => setSearchType("genre")}
+              >
+                Search by Plot/Details
+                {searchType === "genre" && <div className="underline"></div>}
+              </div>
+            </nav>
+            <div className="search-content">
+              {searchType === "title" ? (
+                <>
+                  <SearchImage onSimilarImages={handleSimilarImages} />
+                </>
+              ) : (
+                <>
+                  <SearchDetails onSimilarImages={handleSimilarImages} />
+                </>
               )}
-            </>
-          ) : (
-            <div>Search by Plot/Details Here</div>
+            </div>
+          </div>
+        </Col>
+        <Col style={{ zIndex: 2 }}>
+          {similarImages.length > 0 && (
+            <ResultsCarousel data={similarImages}></ResultsCarousel>
           )}
-        </div>
-      </div>
+        </Col>
+      </Row>
     </div>
   );
 };

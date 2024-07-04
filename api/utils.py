@@ -23,9 +23,13 @@ headers = {
     "Authorization": f"Bearer {os.getenv('TMDB_API_KEY')}",
 }
 
-model = ChatOpenAI(api_key="sk-no-key-required", 
-        model_name = 'LLaMA_CPP',
-        base_url="http://127.0.0.1:8080/v1",
+# model = ChatOpenAI(api_key="sk-no-key-required", 
+#         model_name = 'LLaMA_CPP',
+#         base_url="http://127.0.0.1:8080/v1",
+#         temperature=0.3)
+
+model = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), 
+        model_name = 'gpt-4',
         temperature=0.3)
 
 def get_titles(n=500):
@@ -33,6 +37,7 @@ def get_titles(n=500):
     titles_path = Path('movies.txt')
 
     if titles_path.is_file():
+        print("Using existing file")
         with open('movies.txt', 'r', encoding="utf-8") as f:
             titles = [x.strip() for x in f.readlines()]
     else:
@@ -92,8 +97,9 @@ def insert_all_imgs(titles=None, n=500, client=None):
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
-def query_rag_movie(query):
-    vs = get_vs()
+def query_rag_movie(text, client, movies):
+    
+    vs = get_vs(client=client)
 
     retriever = vs.as_retriever(
                 search_type = "similarity",
@@ -120,11 +126,29 @@ def query_rag_movie(query):
     )
 
 
+    system_prompt = """
+    [INST] <<SYS>>
+    You are part of an intelligent movie search engine.
+    I will provide you with a description of a movie based on a given text.
+    Based on the provided description, you will have to answer a question.  
+    <</SYS>>
+
+    """
+    
     query = f"""
-    Which movie is being described with the following details: 
 
-    {query}
+    {system_prompt}
 
+    Here's my description of the movie:
+
+    {text}
+
+    Return at least 5 movies that are similar to the movie described above among the following: {movies} .
+
+    Return just the titles of the movies in a Python list. 
+
+    [/INST]
+    
     """
 
     response = retrieval_chain.invoke(query)
