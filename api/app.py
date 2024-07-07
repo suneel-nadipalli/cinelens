@@ -122,4 +122,4 @@ def text_rag():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5050)
+    app.run(debug=False, port=5050)
