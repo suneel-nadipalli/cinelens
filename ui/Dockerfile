@@ -8,7 +8,11 @@ COPY package.json package-lock.json ./
 
 RUN npm install --silent
 
-COPY . ./
+RUN npm install react-bootstrap bootstrap
+
+RUN npm install -D prettier eslint-config-prettier eslint-plugin-prettier
+
+COPY . ./ 
 
 CMD ["npm", "start"]
 

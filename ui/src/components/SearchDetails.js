@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { Row, Col, Form, Button } from "react-bootstrap";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5050";
+const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
 
 const SearchDetails = ({ onSimilarImages }) => {
   const [text, setText] = useState("");
