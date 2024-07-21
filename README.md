@@ -1,1 +1,1 @@
-[![Docker Image CI](https://github.com/suneel-nadipalli/cinelens/actions/workflows/docker-image.yml/badge.svg)](https://github.com/suneel-nadipalli/cinelens/actions/workflows/docker-image.yml)
+[![Docker Image CI](https://github.com/suneel-nadipalli/cinelens/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/suneel-nadipalli/cinelens/actions/workflows/ci-cd.yml)
