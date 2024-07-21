@@ -22,10 +22,11 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     
+    - uses: actions/checkout@v4
     - name: Build and push Docker images
       run: |
-        docker-compose -f docker-compose.yml build
-        docker-compose -f docker-compose.yml push
+        docker-compose build
+        docker-compose push
 
     # - uses: actions/checkout@v4
     # - name: Build the Docker image
