@@ -12,6 +12,8 @@ from movie_utils import *
 
 from utils import *
 
+from concurrent.futures import ThreadPoolExecutor
+
 load_dotenv(dotenv_path="./.env.local")
 
 DEBUG = bool(os.environ.get("DEBUG", False))
@@ -81,13 +83,29 @@ def text_rag():
 
     print("\nRequest received\n")
 
-    print(request)
-
     text = request.json['text']
+
+    print(text)
 
     titles = get_titles(n=20) 
 
-    results =eval(query_rag_movie(text, client=client, movies=titles))
+    res_text = ""
+    with ThreadPoolExecutor(max_workers=6) as executor:  # Adjust max_workers based on your system's capabilities
+        futures = []
+        futures.append(executor.submit(query_rag_movie, text, client, titles))
+        
+        for future in futures:
+            res_text += future.result()
+    
+    results = []
+
+    for title in titles:
+        if title.lower() in res_text.lower():
+            results.append(title)
+    
+    results = results[:5]
+
+    # results = (query_rag_movie(text, client=client, movies=titles))
 
     text_results = []
 

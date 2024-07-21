@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 from tqdm import tqdm
 
-import os, requests
+import os, requests, time 
 
 from pathlib import Path
 
@@ -23,14 +23,14 @@ headers = {
     "Authorization": f"Bearer {os.getenv('TMDB_API_KEY')}",
 }
 
-# model = ChatOpenAI(api_key="sk-no-key-required", 
-#         model_name = 'LLaMA_CPP',
-#         base_url="http://127.0.0.1:8080/v1",
-#         temperature=0.3)
-
-model = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), 
-        model_name = 'gpt-4',
+model = ChatOpenAI(api_key="sk-no-key-required", 
+        model_name = 'LLaMA_CPP',
+        base_url="http://127.0.0.1:8080/v1",
         temperature=0.3)
+
+# model = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), 
+#         model_name = 'gpt-4',
+#         temperature=0.3)
 
 def get_titles(n=500):
 
@@ -98,6 +98,9 @@ def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 def query_rag_movie(text, client, movies):
+
+    if client is None:
+        client = connect_to_mongo()
     
     vs = get_vs(client=client)
 
@@ -155,3 +158,14 @@ def query_rag_movie(text, client, movies):
 
     return response
 
+
+def timed_function(func, *args, **kwargs):
+    start_time = time.time()
+    result = func(*args, **kwargs)
+    end_time = time.time()
+
+    elapsed_time = end_time - start_time
+    formatted_time = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
+    
+    print(f"Execution time: {formatted_time}")
+    return result
