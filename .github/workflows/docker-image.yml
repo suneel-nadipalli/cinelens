@@ -55,13 +55,7 @@ jobs:
     - name: Build and push Docker images
       run: |
         docker compose -f docker-compose.yml build
-        docker tag cinelens-ui suneeln646/cinelens-ui:latest
-        docker tag cinelens-api suneeln646/cinelens-api:latest
-        docker push suneeln646/cinelens-ui:latest
-        docker push suneeln646/cinelens-api:latest
-
-    #     docker-compose -f ../../docker-compose.yml push
-
-    # - uses: actions/checkout@v4
-    # - name: Build the Docker image
-    #   run: docker-compose build
+        docker tag cinelens:ui suneeln646/cinelens:ui
+        docker tag cinelens:api suneeln646/cinelens:api
+        docker push suneeln646/cinelens:ui
+        docker push suneeln646/cinelens:api

@@ -2,7 +2,7 @@ version: '3'
 services:
   ui:
     restart: always
-    image: cinelens-ui:latest
+    image: cinelens:ui
     build: ./ui
     ports:
       - '3000:3000'
@@ -13,7 +13,7 @@ services:
       - CHOKIDAR_USEPOLLING=true  
   api:
     restart: always
-    image: cinelens-api:latest
+    image: cinelens:api
     build: ./api
     ports:
       - '5000:5000'
