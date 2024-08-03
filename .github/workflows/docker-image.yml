@@ -33,11 +33,10 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
-    - name: Format with black
-      id: format_black  
-      run: |
-        black --check .    
-
+    - uses: actions/checkout@v4
+    - uses: rickstaa/action-black@v1
+      with:
+        black_args: ". --check"
     # - name: Set up Docker Buildx
     #   uses: docker/setup-buildx-action@v2
 
