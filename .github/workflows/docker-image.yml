@@ -40,7 +40,7 @@ jobs:
         args: --style pep8 --recursive --in-place .
 
     - name: Build the Docker image
-      run: docker build . --file docker-compose.yml --tag cinelens:latest    
+      run: docker-compose build . --file docker-compose.yml --tag cinelens:latest    
     # - name: Set up Docker Buildx
     #   uses: docker/setup-buildx-action@v2
 
