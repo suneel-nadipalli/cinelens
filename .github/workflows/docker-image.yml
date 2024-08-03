@@ -33,11 +33,14 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
-    - name: autoyapf
+    - name: Format with autoyapf
       id: autoyapf
       uses: mritunjaysharma394/autoyapf@v2
       with:
         args: --style pep8 --recursive --in-place .
+
+    - name: Build the Docker image
+      run: docker build . --file docker-compose.yml --tag cinelens:latest    
     # - name: Set up Docker Buildx
     #   uses: docker/setup-buildx-action@v2
 
