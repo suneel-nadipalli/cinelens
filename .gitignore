@@ -13,3 +13,4 @@ __pycache__
 *jpeg
 *.png
 DB/
+.pytest_cache/

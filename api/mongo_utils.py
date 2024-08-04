@@ -39,11 +39,14 @@ def emb_img(obj, type="url"):
         response = requests.get(obj)
 
         img = Image.open(BytesIO(response.content))
-        
+       
         return model.encode(img)
 
     elif type == "file":
-        img = Image.open(BytesIO(obj.stream.read()))   
+        try:
+         img = Image.open(BytesIO(obj.stream.read()))   
+        except:
+            img = Image.open(obj) 
     
         return model.encode(img)
     

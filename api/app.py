@@ -44,6 +44,8 @@ def img_rag():
 
     image = request.files['image']
 
+    print(type(image))
+
     results = get_img(image, client=client, type="file")
 
     img_results = []
