@@ -9,8 +9,5 @@ env
 __pycache__
 *.llamafile.exe
 *.log
-*.jpg
-*jpeg
-*.png
 DB/
 .pytest_cache/
