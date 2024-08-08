@@ -22,7 +22,21 @@ The system architecture is as follows:
 
 The following diagram visualizes the above process for a clearer picture:
 
-[IMAGE]
+![Architecture](git-images/arch.png)
+
+## Evaluation
+
+For the purposes of evaluation, a set of Gold Truth question-answer pairs was prepared and tested against. The final LLM was evaluated against these question-answer pairs with and without RAG to test the effectiveness of the same.
+
+The evaluation was done on two grounds: speed, quality of response.
+
+Speed was recorded as the time the LLM took to respond to the user's query.
+
+Quality of response was rather simple, given the unconventional use of RAG in this application: the query was a vague description of a movie within the database, and the response was the actual movie title. If among the LLM's response the movie was mentioned, the score was recorded as 1. Else, it was noted to be 0.
+
+![Score](git-images/score.png)
+
+![Speed](git-images/speed.png)
 
 ## Instructions for Setup, Running, and Testing Application 
 
@@ -30,10 +44,12 @@ The following diagram visualizes the above process for a clearer picture:
 
 Download the [Rocket-3B](https://huggingface.co/Mozilla/rocket-3B-llamafile/resolve/main/rocket-3b.Q5_K_M.llamafile?download=true) llamafile from the Mozilla Ocho Repository: https://github.com/Mozilla-Ocho/llamafile
 
+Also, navigate to the api folder and create a new file called ".env.local". This will need to contain an environment variable under the name OPENAI_API_KEY, an OpenAI API of your own.
+
 Once you have downloaded the llamafile, run the following command in your terminal to grant permission for your computer to run the model (only need to do this once) 
 
 ```
-chmod +x mistral-7b-instruct-v0.2.Q4_0.llamafile
+chmod +x rocket-3b.Q5_K_M.llamafile
 ```
 
 Clone this repository into your local machine. Navigate to any directory and run the following comand to clone the repo:
@@ -47,8 +63,10 @@ git clone https://github.com/suneel-nadipalli/cinelens.git
 Start the llamafile server (must be done everytime): 
 
 ```
-./mistral-7b-instruct-v0.2.Q4_0.llamafile
+./rocket-3b.Q5_K_M.llamafile
 ```
+
+Navigate to the ai folder
 
 Create a virtual environment by running: 
 
@@ -61,6 +79,19 @@ Activate the virtual environment by running:
 ```
 source venv/bin/activate
 ```
+
+Install dependencies by running 
+
+```
+pip3 install -r requirements.txt
+```
+Navigate to the ui folder
+
+Install dependencies by running 
+
+```
+npm install
+``` 
 
 Build the docker images for both the frontend and the backend by navigating to their respective directories (api & ui): 
 
@@ -84,15 +115,19 @@ docker run -p 3000:3000 cinelens-ui
 ```  
 The frontend/UI should now be available at http://localhost:3000
 
-[IMAGE]
+![Frontend UI](git-images/cinelens.png)
+
+Alternatively, the following can also be done to start the application:
+- Navigate to the ai folder
+- Activate (& create if needed) a virtual environment
+- Install dependencies
+- Run python app.py
+- Navigate to the ui folder
+- Run npm start
 
 ### Testing the Application 
 
-Create a virtual environment by running: 
-
-```
-python3 -m venv venv
-```
+Navigate to the ai folder
 
 Activate the virtual environment by running 
 
@@ -100,16 +135,12 @@ Activate the virtual environment by running
 source venv/bin/activate
 ```
 
-Install dependencies by running 
-
-```
-pip3 install -r requirements.txt
-```
-
 To test the database connection, embedding function, image similarity search, third-party API access and other core functionality, navigate to the /tests folder within the api folder and run the following:
 
 ```
 pytest
 ```
+
+The command line should then display a message indicating that all tests (10/10) have passed
 
 The command line should then display a message indicating that all tests (10/10) have passed
