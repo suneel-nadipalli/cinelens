@@ -48,9 +48,11 @@ Quality of response was rather simple, given the unconventional use of RAG in th
 
 Download the [Rocket-3B](https://huggingface.co/Mozilla/rocket-3B-llamafile/resolve/main/rocket-3b.Q5_K_M.llamafile?download=true) llamafile from the Mozilla Ocho Repository: https://github.com/Mozilla-Ocho/llamafile
 
-Also, navigate to the api folder and create a new file called ".env.local". This will need to contain an environment variable under the name OPENAI_API_KEY, an OpenAI API of your own.
+You'll need to navigate to the api folder and do a few things:
+- Create a new file called ".env.local". This will need to contain an environment variable under the name OPENAI_API_KEY, an OpenAI API of your own.
+- Create a new folder called llamafiles (this is where you'll place the donloaded llamafile)
 
-Once you have downloaded the llamafile, run the following command in your terminal to grant permission for your computer to run the model (only need to do this once) 
+Once you have downloaded the llamafile, run the following command (in the llamafiles directory)  in your terminal to grant permission for your computer to run the model (only need to do this once) 
 
 ```
 chmod +x rocket-3b.Q5_K_M.llamafile
