@@ -8,6 +8,10 @@ Cinlenes is an intelligent movie search engine designed to help users find that 
 
 This project uses a Retrieval Augmented Generation (RAG) System in tandem with an Open Source LLM from Mozilla to determine the search results. Cinelens is equipped with information about the movies from websites such as Letterboxd, IMDB, Wikipedia, and more; to give it as much information as possible about each movie to ensure the most accurate responses.
 
+## Demo
+
+Link to the demo of the application: https://youtu.be/5fB28WlIX7Q
+
 ## Architecture
 
 The system architecture is as follows:
