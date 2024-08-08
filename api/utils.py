@@ -8,6 +8,8 @@ from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 
 from mongo_utils import *
 
+import openai
+
 from dotenv import load_dotenv
 
 from tqdm import tqdm
@@ -20,7 +22,7 @@ load_dotenv(dotenv_path=".env.local")
 
 headers = {
     "accept": "application/json",
-    "Authorization": f"Bearer {os.getenv('TMDB_API_KEY')}",
+    "Authorization": f"Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYTBmYmYzYzRmZDdhZWVlMjZiNTc4MGUyOGU4YTdmZiIsInN1YiI6IjY2NmRkMWM5MjA2NGRmMzI3MGRmOTBiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qWFPmYvwpJ4NgJkvlq-3P--69tDxaomyUvSkz8aXdZs",
 }
 
 model = ChatOpenAI(api_key="sk-no-key-required", 
@@ -157,6 +159,23 @@ def query_rag_movie(text, client, movies):
     response = retrieval_chain.invoke(query)
 
     return response
+
+def query_movie(text):
+
+    client = openai.OpenAI(
+        base_url="http://localhost:8080/v1",
+        api_key="sk-no-key-required"
+    )
+    completion = client.chat.completions.create(
+        model="LLaMA_CPP",
+        messages=[
+            {"role": "system", "content": ""},
+            {"role": "user", "content": text}
+        ]
+    )
+    
+    return completion.choices[0].message.content            
+    
 
 
 def timed_function(func, *args, **kwargs):

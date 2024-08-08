@@ -1,0 +1,40 @@
+1
+query = A masked vigilante battles a chaotic villain bent on causing anarchy in a gritty city, starring Christian Bale and Heath Ledger, in this 2008 action-packed crime thriller.
+response = The Dark Knight
+
+2
+query = A man wrongly convicted of murder forms an enduring friendship with a fellow inmate while finding hope and redemption within the walls of a grim prison, featuring Tim Robbins and Morgan Freeman, in this 1994 drama.
+response = The Shawshank Redemption
+
+3
+query = In a 1930s prison, a death row guard discovers the miraculous abilities of a gentle giant inmate, starring Tom Hanks and Michael Clarke Duncan, in this 1999 emotional drama.
+response = The Green Mile
+
+4
+query = Interwoven stories of crime and redemption unfold in Los Angeles, featuring John Travolta, Samuel L. Jackson, and Uma Thurman, in this 1994 darkly comedic crime drama.
+response = Pulp Fiction
+
+5
+query = A powerful crime family patriarch passes the reins to his reluctant son in a gripping saga of loyalty and betrayal, starring Marlon Brando and Al Pacino, in this 1972 classic crime drama.
+response = The Godfather
+
+6
+query = A businessman embarks on a risky mission to save his Jewish employees during the Holocaust, with Liam Neeson and Ralph Fiennes, in this 1993 historical drama.
+response = Schindler's List
+
+7
+query = A kind-hearted man with a low IQ unwittingly influences historical events and finds love across several decades, starring Tom Hanks, in this 1994 heartwarming drama.
+response = Forrest Gump
+
+8
+query = A lone juror's steadfast doubt prompts intense deliberations among a diverse group of men deciding a young defendant's fate, in this 1957 courtroom drama.
+response = 12 Angry Men
+
+9
+query = The final battle for Middle-earth unfolds as a group of heroes strives to destroy a powerful ring, featuring Elijah Wood and Viggo Mortensen, in this 2003 epic fantasy adventure.
+response = The Lord of the Rings: The Return of the King
+
+10
+query = The saga continues with a parallel story of a crime family's rise to power and its leader’s struggle to maintain control, starring Al Pacino and Robert De Niro, in this 1974 epic crime drama.
+response = The Godfather Part II
+

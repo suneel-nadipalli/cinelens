@@ -29,7 +29,7 @@ from langchain_community.document_loaders import WebBaseLoader
 
 headers = {
     "accept": "application/json",
-    "Authorization": f"Bearer {os.getenv('TMDB_API_KEY')}",
+    "Authorization": f"Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYTBmYmYzYzRmZDdhZWVlMjZiNTc4MGUyOGU4YTdmZiIsInN1YiI6IjY2NmRkMWM5MjA2NGRmMzI3MGRmOTBiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.qWFPmYvwpJ4NgJkvlq-3P--69tDxaomyUvSkz8aXdZs",
 }
 
 def emb_img(obj, type="url"):
@@ -81,7 +81,7 @@ def connect_to_mongo():
 
     ca = certifi.where()
 
-    MONGO_URI = os.getenv("MONGO_URI")
+    MONGO_URI = "mongodb+srv://suneelnadipalli:hPMlZEGwWrHm1hDH@cinelenscluster.gj390ta.mongodb.net/"
 
     client = MongoClient(MONGO_URI, tlsCAFile=ca)
     # Send a ping to confirm a successful connection
@@ -95,13 +95,13 @@ def connect_to_mongo():
 
 def insert_movie(title, client=None):
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
     movie = get_details(title, headers)
 
     movie['name'] = title.lower().replace(' ', '-')
 
-    movie_col = cl_db[os.getenv("MOVIES_COL")]
+    movie_col = cl_db["movies"]
 
     movie_col.insert_one(movie)
 
@@ -111,9 +111,9 @@ def insert_vs(movie, client=None):
 
     docs = get_docs(movie)
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
-    vs_col = cl_db[os.getenv("VS_COL")]
+    vs_col = cl_db["vectorstores"]
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, 
                                                     chunk_overlap=100)
@@ -132,9 +132,9 @@ def insert_vs(movie, client=None):
 
 def insert_imgs(title, client=None):
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
-    img_col = cl_db[os.getenv("IMGS_COL")]
+    img_col = cl_db["images"]
 
     movie = get_movie(title, client)
 
@@ -154,9 +154,9 @@ def insert_imgs(title, client=None):
 
 def get_movie(title, client=None):
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
-    movie_col = cl_db[os.getenv("MOVIES_COL")] 
+    movie_col = cl_db["movies"] 
 
     movie = movie_col.find_one( {"name": f"{title.lower().replace(' ', '-')}"} )
 
@@ -164,13 +164,13 @@ def get_movie(title, client=None):
 
 def get_vs(client=None):
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
-    vs_col = cl_db[os.getenv("VS_COL")]
+    vs_col = cl_db["vectorstores"]
 
     vector_search = MongoDBAtlasVectorSearch.from_connection_string(
-    os.getenv("MONGO_URI"),
-    os.getenv("CINELENS_DB") + "." + os.getenv("VS_COL"),
+    "mongodb+srv://suneelnadipalli:hPMlZEGwWrHm1hDH@cinelenscluster.gj390ta.mongodb.net/",
+    "cinelens" + "." + "vectorstores",
     OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"), 
                             disallowed_special=()),
     )
@@ -179,9 +179,9 @@ def get_vs(client=None):
 
 def get_url(title, client=None):
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
-    movie_col = cl_db[os.getenv("MOVIES_COL")]
+    movie_col = cl_db["movies"]
 
     movie = movie_col.find_one({"name": title})
 
@@ -191,9 +191,9 @@ def get_url(title, client=None):
 
 def get_img(query, client=None, type="file"):
 
-    cl_db = client[os.getenv("CINELENS_DB")]
+    cl_db = client["cinelens"]
 
-    img_col = cl_db[os.getenv("IMGS_COL")]
+    img_col = cl_db["images"]
 
     query_emb = emb_img(query, type)
 

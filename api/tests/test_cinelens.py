@@ -1,6 +1,6 @@
 import sys, pytest
 
-sys.path.append("..")
+sys.path.append("../.")
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="../.env.local")
